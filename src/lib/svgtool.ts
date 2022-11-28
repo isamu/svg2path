@@ -181,7 +181,6 @@ export const convSVG2SVG = (svtText: string) => {
   const { height, width, max } = getSvgSize(svg);
 
   const pathElements = findPath(svg.children as ElementNode[]);
-  console.log(pathElements);
   const path2 = pathElements.map((element: ElementNode) => {
     const fill = element2fill(element);
     const stroke = element2stroke(element);
@@ -203,23 +202,6 @@ export const convSVG2SVG = (svtText: string) => {
 
 const main = async (folder: string) => {
   /*
-
-  const obj = parse(svgData);
-
-  const svg = obj.children[0] as ElementNode;
-  const { height, width, max } = getSvgSize(svg);
-  
-  const pathElements = findPath(svg.children as ElementNode[]);
-  
-  const path = pathElements
-  .map((item: ElementNode) => {
-  return item.properties?.d;
-  })
-  .join("");
-  //console.log(path)
-  
-
-  });
   const constants = array
     .map((item) => {
       const length = item.path2.length;
@@ -254,26 +236,6 @@ const main = async (folder: string) => {
       return code;
     })
     .join("\n");
-  console.log(constants);
-  
-  const calls = array
-    .map((item) => {
-      const code = `register("${item.char}", ${item.name}, ${item.width});`;
-      stream.write(`${code}\n`);
-      return code;
-    })
-    .join("\n");
-  // console.log(calls);
 
-  const calls2 = array
-    .map((item) => {
-      const code = `parts["${item.name}"] = parts_${item.name};`
-      stream.write(`${code}\n`);
-      return code;
-    })
-    .join("\n");
-  // console.log(calls);
-  console.log(calls2)
-      
 */
 };
