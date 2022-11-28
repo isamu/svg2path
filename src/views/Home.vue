@@ -15,15 +15,14 @@
       </div>
     </div>
     <div class="flex">
-      <div class="flex-item">
+      <div class="flex-item" v-if="svgData">
         before<br />
-        <img :src="svgData" v-if="svgData" class="mx-4 mt-4 h-48 w-48" />
+        <img :src="svgData" class="mx-4 mt-4 h-48 w-48" />
       </div>
-      <div class="flex-item">
+      <div class="flex-item" v-if="convedSVGData">
         after<br />
         <img
           :src="convedSVGData"
-          v-if="convedSVGData"
           class="mx-4 mt-4 h-48 w-48"
         />
       </div>
@@ -46,10 +45,10 @@
 
 <script lang="ts">
 import { defineComponent, ref } from "vue";
-import { convSVG2SVG } from "@/lib/svgtool";
+import { convSVG2SVG, svg2imgSrc } from "@/lib/svgtool";
 import format from "xml-formatter";
+
 export default defineComponent({
-  name: "HomePage",
   components: {},
   setup() {
     const file = ref();
@@ -62,13 +61,9 @@ export default defineComponent({
 
     const readSVGData = async () => {
       svgText.value = await file.value.text();
-      svgData.value =
-        "data:image/svg+xml;base64," +
-        btoa(unescape(encodeURIComponent(svgText.value)));
+      svgData.value = svg2imgSrc(svgText.value);
       convedSVGText.value = convSVG2SVG(svgText.value);
-      convedSVGData.value =
-        "data:image/svg+xml;base64," +
-        btoa(unescape(encodeURIComponent(convedSVGText.value)));
+      convedSVGData.value = svg2imgSrc(convedSVGText.value);
     };
 
     const uploadFile = (e: any) => {

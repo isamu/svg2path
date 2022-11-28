@@ -3,6 +3,7 @@
   "version": "1.0.3",
   "license": "MIT",
   "scripts": {
+    "buildSample": "ts-node batch/buildIndex.ts",
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
@@ -21,6 +22,7 @@
     "xml-formatter": "^2.6.1"
   },
   "devDependencies": {
+    "@types/node": "^18.11.9",
     "@types/svg-parser": "^2.0.3",
     "@typescript-eslint/eslint-plugin": "^5.41.0",
     "@typescript-eslint/parser": "^5.41.0",
@@ -38,6 +40,7 @@
     "postcss": "^8.4.18",
     "prettier": "^2.7.1",
     "tailwindcss": "^3.2.1",
+    "ts-node": "^10.9.1",
     "typescript": "^4.8.4"
   }
 }

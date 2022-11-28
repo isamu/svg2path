@@ -186,7 +186,7 @@ export const convSVG2SVG = (svtText: string) => {
     const stroke = element2stroke(element);
     const strokeWidth = element2strokeWidth(element, max);
     const translate = element2translate(element);
-    console.log(strokeWidth, translate);
+
     return {
       path: normalizePath(String(element.properties?.d) || "", Number(max)),
       fill,
@@ -200,42 +200,9 @@ export const convSVG2SVG = (svtText: string) => {
   return convertedSVG;
 };
 
-const main = async (folder: string) => {
-  /*
-  const constants = array
-    .map((item) => {
-      const length = item.path2.length;
-      const {  width, height, max } = item;
-      const paths: any[] = [];
-      const fills: any[] = [];
-      const stroke: any[] = [];
+export const svg2imgSrc = (svg: string) => {
+  return "data:image/svg+xml;base64," +
+    btoa(unescape(encodeURIComponent(svg)));
 
-      item.path2.map((path, k) => {
-        paths.push(`          paths[${k}] = "${solidityString(compressPath(path.path as string, 1024))}";`);
-        fills.push(`          fill[${k}] = "${path.fill}";`);
-        stroke.push(`          stroke[${k}] = ${path.stroke || 0};`);
-        // console.log(path.fill);
-      });
-      const code = [
-        `      function parts_${item.name}() internal pure returns(uint16[4] memory sizes, bytes[] memory paths, string[] memory fill, uint8[] memory stroke) {`,
-        `          sizes = [${length}, ${max}, ${width}, ${height}];`,
-        "          paths = new bytes[](sizes[0]);",
-        "          fill = new string[](sizes[0]);",
-        "          stroke = new uint8[](sizes[0]);",
-        "",
-        paths.join("\n"),
-        fills.join("\n"),
-        stroke.join("\n"),
-        "      }",
-      ].join("\n");
-      // console.log(item);
-      
-      // const code = `bytes constant ${item.name} = "${item.bytes}"`;
-      stream.write(`${code}\n`);
-
-      return code;
-    })
-    .join("\n");
-
-*/
 };
+
