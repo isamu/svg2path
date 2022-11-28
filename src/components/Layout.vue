@@ -1,6 +1,5 @@
 <template>
   <div class="layout">
-    <HeaderMenu />
     <router-view />
     <Languages class="mt-4" />
   </div>
@@ -16,7 +15,6 @@ import { User } from "firebase/auth";
 import { useI18nParam } from "@/i18n/utils";
 
 import Languages from "@/components/Languages.vue";
-import HeaderMenu from "@/components/HeaderMenu.vue";
 
 interface UserData {
   user: User | null;
@@ -26,7 +24,6 @@ export default defineComponent({
   name: "AppLayout",
   components: {
     Languages,
-    HeaderMenu,
   },
   async setup() {
     const store = useStore();
