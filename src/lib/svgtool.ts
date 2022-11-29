@@ -117,8 +117,7 @@ const getSvgSize = (svg: ElementNode) => {
 
 // end of properties
 
-const dumpConvertSVG = (svg: ElementNode, paths: any[]) => {
-  const vb = (svg.properties?.viewBox as string) || "";
+const dumpConvertSVG = (paths: any[]) => {
   const ret =
     `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">\n\t<g>\n` +
     paths
@@ -215,7 +214,7 @@ const elementToData = (element: ElementNode, max: number) => {
     translate,
   };
 }
-export const convSVG2SVG = (svtText: string, isBFS: boolean) => {
+export const convSVG2Path = (svtText: string, isBFS: boolean) => {
   const obj = parse(svtText);
 
   const svg = obj.children[0] as ElementNode;
@@ -225,8 +224,12 @@ export const convSVG2SVG = (svtText: string, isBFS: boolean) => {
   const path = pathElements.map((element: ElementNode) => {
     return elementToData(element, max);
   });
+  return path;
+}
 
-  const convertedSVG = dumpConvertSVG(svg, path);
+export const convSVG2SVG = (svtText: string, isBFS: boolean) => {
+  const path = convSVG2Path(svtText, isBFS);
+  const convertedSVG = dumpConvertSVG(path);
   return convertedSVG;
 };
 
