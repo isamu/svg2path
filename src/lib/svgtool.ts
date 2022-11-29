@@ -29,22 +29,39 @@ const ellipse2path = (element: ElementNode) => {
   },0 a ${rx},${ry} 0 1,0 ${-(rx * 2)},0`;
 };
 
+const getNumber = (item: string | number | undefined) => {
+  const match = String(item).match(/^(\d+)%$/)
+  if (match) {
+    return Number(match[1]) * 1024 / 100;
+  }
+  return item;
+};
 const rect2path = (element: ElementNode) => {
   const x = Number(element.properties?.x || "0");
   const y = Number(element.properties?.y || "0");
-  const rx = Number(element.properties?.width);
-  const ry = Number(element.properties?.height);
+  const rx = Number(getNumber(element.properties?.width));
+  const ry = Number(getNumber(element.properties?.height));
   return `M ${x} ${y} H ${rx + x} V ${ry + y} H ${x} Z`;
 };
 // end of svg to svg
 
-const findPath = (obj: ElementNode[]) => {
+const findPath = (obj: ElementNode[], isBFS: boolean) => {
   const ret: ElementNode[] = [];
 
+  const children: ElementNode[] = [];
   obj.map((element) => {
     if (element.children) {
-      findPath(element.children as ElementNode[]).map((childRet) => {
-        ret.push(childRet);
+      if (element.tagName === 'clipPath') {
+        return ;
+      }
+      element.children.map((c) => {
+        if (isBFS) {
+          children.push(c as ElementNode);
+        } else {
+          findPath(element.children as ElementNode[], isBFS).map((childRet) => {
+            ret.push(childRet);
+          });
+        }
       });
     }
     if (element.tagName === "path") {
@@ -75,6 +92,13 @@ const findPath = (obj: ElementNode[]) => {
       ret.push(element);
     }
   });
+  if (isBFS) {
+    if (children.length > 0) {
+      findPath(children as ElementNode[], isBFS).map((childRet) => {
+        ret.push(childRet);
+      });
+    }
+  }
   return ret;
 };
 
@@ -154,13 +178,16 @@ const element2stroke = (element: ElementNode) => {
   return getElementProperty(element, "stroke");
 };
 
+const normalizePos = (pos: number, max: number) => {
+  return (pos * 1024) / max;
+};
 const element2strokeWidth = (element: ElementNode, max: number) => {
   if ((element.properties || {})["stroke-width"]) {
     return (element.properties || {})["stroke-width"];
   }
   const styles = style2elem((element.properties?.style as string) || "");
   const match = (styles["stroke-width"] || "").match(/^\d+/);
-  const stroke = match ? (match[0] * 1024) / max : 0;
+  const stroke = match ? normalizePos(match[0], max) : 0;
 
   return Math.round(stroke);
 };
@@ -174,29 +201,32 @@ const element2translate = (element: ElementNode) => {
   return [];
 };
 
-export const convSVG2SVG = (svtText: string) => {
+const elementToData = (element: ElementNode, max: number) => {
+  const fill = element2fill(element);
+  const stroke = element2stroke(element);
+  const strokeWidth = element2strokeWidth(element, max);
+  const translate = element2translate(element);
+
+  return {
+    path: normalizePath(String(element.properties?.d) || "", Number(max)),
+    fill,
+    stroke,
+    strokeW: strokeWidth,
+    translate,
+  };
+}
+export const convSVG2SVG = (svtText: string, isBFS: boolean) => {
   const obj = parse(svtText);
 
   const svg = obj.children[0] as ElementNode;
   const { height, width, max } = getSvgSize(svg);
 
-  const pathElements = findPath(svg.children as ElementNode[]);
-  const path2 = pathElements.map((element: ElementNode) => {
-    const fill = element2fill(element);
-    const stroke = element2stroke(element);
-    const strokeWidth = element2strokeWidth(element, max);
-    const translate = element2translate(element);
-
-    return {
-      path: normalizePath(String(element.properties?.d) || "", Number(max)),
-      fill,
-      stroke,
-      strokeW: strokeWidth,
-      translate,
-    };
+  const pathElements = findPath(svg.children as ElementNode[], isBFS);
+  const path = pathElements.map((element: ElementNode) => {
+    return elementToData(element, max);
   });
 
-  const convertedSVG = dumpConvertSVG(svg, path2);
+  const convertedSVG = dumpConvertSVG(svg, path);
   return convertedSVG;
 };
 

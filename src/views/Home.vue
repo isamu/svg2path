@@ -62,7 +62,7 @@ export default defineComponent({
     const readSVGData = async () => {
       svgText.value = await file.value.text();
       svgData.value = svg2imgSrc(svgText.value);
-      convedSVGText.value = convSVG2SVG(svgText.value);
+      convedSVGText.value = convSVG2SVG(svgText.value, true);
       convedSVGData.value = svg2imgSrc(convedSVGText.value);
     };
 
